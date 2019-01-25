@@ -1,0 +1,20 @@
+#detailModal .modal-header{
+    height: 300px;
+    border-bottom: none;
+    background:url(../images/564.jpg);
+    background-size:100% auto;
+}
+#detailModal .image-bg{
+    position: absolute;
+    top: 220px;
+    width: 100%;
+    height: 80px;
+    background-image: -webkit-linear-gradient(top, rgba(231,51, 104, 0) 0%, rgb(255, 255, 255) 100%);
+    background-image: -moz-linear-gradient(top, rgba(231,51, 104, 0) 0%, rgb(255, 255, 255) 100%);
+    background-image: -o-linear-gradient(top, rgba(231,51, 104, 0) 0%, rgb(255, 255, 255) 100%);
+    background-image: linear-gradient(top, rgba(231,51, 104, 0) 0%, rgb(255, 255, 255) 100%);
+}
+#detailModal img{
+    width: 100%;
+    border-radius: 4px;
+}

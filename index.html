@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.min.css?v=3.3.6">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/jquery.flex-images.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/index.css">
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/piexif.js"></script>
+</head>
+<style type="text/css">
+    body {
+        padding-top: 60px;
+    }
+
+    #imgFlow img:hover {
+        border: 1px solid red;
+    }
+
+    table, th, td {
+        table-layout: fixed;
+        border: 1px solid black;
+    }
+
+    .t {
+        width: 700px;
+        overflow: hidden;
+    }
+
+    .divtd {
+        height: 30px;
+        overflow: hidden;
+    }
+
+
+    .th {
+        overflow: hidden;
+    }
+
+    .te {
+        width: 350px;
+        height: 30px;
+        overflow: hidden;
+    }
+
+    .originalImage {
+        max-width: 300px;
+        height: auto;
+    }
+</style>
+<body>
+<input id="f" type="file" name="jpg" size="30" accept="image/jpeg" /><br>
+<div id="message"></div>
+<div id="output"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+      </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="pre-scrollable col-lg-10 col-lg-offset-1" style="height: 800px;margin-top: 35px">
+            <div class="flex-images" id="imgFlow">
+                <div class="item" data-w="200" data-h="150"><img src="http://0/?1"></div>
+                <div class="item" data-w="250" data-h="150"><img src="http:/250/150/?2"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://lom/150/150/?3"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://l/150/?4"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://lorm/200/150/?5"></div>
+                <div class="item" data-w="100" data-h="150"><img src="http://lor100/150/?6"></div>
+                <div class="item" data-w="180" data-h="150"><img src="http://lorec/180/150/?7"></div>
+                <div class="item" data-w="185" data-h="150"><img src="http://lore185/150/?8"></div>
+                <div class="item" data-w="350" data-h="150"><img src="http://lorempixel?9"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://l00/150/?10"></div>
+                <div class="item" data-w="165" data-h="150"><img src="http:/165/150/?11"></div>
+                <div class="item" data-w="150" data-h="150"><img src="l.com/150/150/?12"></div>
+                <div class="item" data-w="120" data-h="150"><img src="http://lorempix/150/?13"></div>
+                <div class="item" data-w="120" data-h="150"><img src="http://lorm/120/?14"></div>
+                <div class="item" data-w="140" data-h="150"><img src="http:///140/150/?15"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://lor00/150/?16"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://0/?1"></div>
+                <div class="item" data-w="250" data-h="150"><img src="http:/250/150/?2"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://lom/150/150/?3"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://l/150/?4"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://lorm/200/150/?5"></div>
+                <div class="item" data-w="100" data-h="150"><img src="http://lor100/150/?6"></div>
+                <div class="item" data-w="170" data-h="150"><img src="http://lorem/170/150/?17"></div>
+                <div class="item" data-w="120" data-h="150"><img src="http://lorm/120/?14"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://lor00/150/?16"></div>
+                <div class="item" data-w="170" data-h="150"><img src="http://lorem/170/150/?17"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://0/?1"></div>
+                <div class="item" data-w="250" data-h="150"><img src="http:/250/150/?2"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://lom/150/150/?3"></div>
+                <div class="item" data-w="150" data-h="150"><img src="http://l/150/?4"></div>
+                <div class="item" data-w="200" data-h="150"><img src="http://lorm/200/150/?5"></div>
+                <div class="item" data-w="100" data-h="150" data-toggle="modal" data-target="#myModal"><img
+                        src="http://lor100/150/?6"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="image-bg"></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">Exif</div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>属性</th>
+                                    <th>First Name</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>DateTimeOriginal</td>
+                                    <td>
+                                        <input type="text" class="form-control" value="2010%3A10%3A10%2010%3A10%3A10"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Sharpness</td>
+                                    <td>
+                                        <input type="text" class="form-control" value="777"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>LensSpecification</td>
+                                    <td>
+                                        <input type="text" class="form-control" value="[[1,1],[1,1],[1,1],[1,1]]"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>LensMake</td>
+                                    <td>
+                                        <input type="text" class="form-control" value="KJisss"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">重置</button>
+                <button type="button" class="btn btn-success">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery.flex-images.min.js"></script>
+<script>
+    $('#imgFlow').flexImages({rowHeight: 100});
+    $('#imgFlow').find('div').click(function () {
+        $('#detailModal').modal({
+            // backdrop: 'static',
+            // keyboard: false
+            // remote: '/modify.html'
+
+        })
+    });
+    $('#detailModal').on('hidden.bs.modal', function (e) {
+
+    })
+    function printExif(dataURL) {
+        var originalImg = new Image();
+        originalImg.src = dataURL;
+
+        var exif = piexif.load(dataURL);
+        var ifds = ["0th", "Exif", "GPS", "Interop", "1st"];
+        var s = ""
+        for (var i=0; i<5; i++)
+        {
+            var ifd = ifds[i];
+            var ifd_i = "";
+            for (var tag in exif[ifd]) {
+                var str;
+                if (exif[ifd][tag] instanceof Array) {
+                    str = JSON.stringify(exif[ifd][tag]);
+                } else {
+                    str = escape(exif[ifd][tag]);
+                }
+                ifd_i += ("<tr><td class='te'>" + piexif.TAGS[ifd][tag]["name"] +
+                    "</td><td class='te'><div class='divtd'>" +
+                    str + "</div></td></tr>");
+            }
+            s += ("<table class='t'><tr><th colspan='2' class='th'>" +
+                ifd + "</th></tr>" + ifd_i + "</table>");
+        }
+        if (exif["thumbnail"]) {
+            var thumbStr = "data:image/jpeg;base64," + btoa(exif["thumbnail"]);
+            var img = "<img src='{img}'></img>".replace("{img}", thumbStr);
+            s += ("<table class='t'><tr><th class='th'>thumbnail</th></tr><tr><td>" +
+                img + "</td></tr></table><br>");
+        }
+        var newDiv = $("<div class='z'></div>").html(s).hide();
+        $("#output").prepend(newDiv);
+
+        originalImg.onload = function () {
+            var w = originalImg.width;
+            var h = originalImg.height;
+            var size = $("<div></div>").text("Original size:" + w + "*" + h);
+            var im = $(originalImg).addClass("originalImage");
+            newDiv.prepend(im);
+            newDiv.prepend(size);
+        }
+
+        newDiv.slideDown(2000);
+    }
+
+    function handleFileSelect(evt) {
+        var file = evt.target.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function(e){
+            printExif(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    document.getElementById('f').addEventListener('change', handleFileSelect, false);
+</script>
+</body>
+</html>
