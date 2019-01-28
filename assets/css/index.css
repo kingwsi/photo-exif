@@ -1,11 +1,11 @@
 .welcome{
     display: block;
     text-align: center;
-    padding-top: 100px;
+    padding-top: 150px;
 }
 .pre-scrollable{
     border: #9b9b9b dashed 1px;
-    max-height: 450px;
+    max-height: 400px;
 }
 .modal-content{
     border: 0px!important;
@@ -30,4 +30,13 @@
 #detailModal img {
     width: 100%;
     border-radius: 4px;
+}
+.foot{
+    margin-top: 20px;
+    text-align: center;
+    padding: 20px 0px;
+    color: #5e5e5e;
+}
+.foot p{
+    display: block;
 }

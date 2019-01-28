@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>照片Exif信息查看&修改</title>
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.min.css?v=3.3.6">
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/jquery.flex-images.css">
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/index.css">
@@ -53,7 +53,8 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
-            <button type="button" class="btn btn-default btn-block" onclick="$('input[id=pictures]').click();">选择文件夹</button>
+            <button type="button" class="btn btn-default btn-block" onclick="$('input[id=pictures]').click();">选择文件夹
+            </button>
         </div>
     </div>
     <div class="row">
@@ -65,7 +66,20 @@
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 foot">
+            <p>声明</p>
+            <p>
+                使用开源库&nbsp;
+                <a href="https://github.com/hMatoba/piexifjs" target="_blank">piexifjs</a>&nbsp;
+                <a href="https://github.com/twbs/bootstrap" target="_blank">BootStrap</a>&nbsp;
+            </p>
+            <p>
+                author&nbsp; <a>ws</a>&nbsp;
+                <a href="https://github.com/kingwsi/photo-exif" target="_blank">https://github.com/kingwsi/photo-exif</a>
+            </p>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -81,42 +95,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="panel panel-default" id="output">
-                            <!-- Default panel contents -->
-                            <div class="panel-heading">Exif</div>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>属性</th>
-                                    <th>First Name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>DateTimeOriginal</td>
-                                    <td>
-                                        <input type="text" class="form-control" value="2010%3A10%3A10%2010%3A10%3A10"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Sharpness</td>
-                                    <td>
-                                        <input type="text" class="form-control" value="777"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>LensSpecification</td>
-                                    <td>
-                                        <input type="text" class="form-control" value="[[1,1],[1,1],[1,1],[1,1]]"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>LensMake</td>
-                                    <td>
-                                        <input type="text" class="form-control" value="KJisss"/>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -133,7 +112,8 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="89"
+                     aria-valuemin="0" aria-valuemax="100" style="width: 45%">
                 </div>
             </div>
         </div>
@@ -147,7 +127,7 @@
     }
 
     function loading(ratio) {
-        $(".progress-bar").attr("aria-valuenow",ratio).attr("style","width: "+ratio+"%");
+        $(".progress-bar").attr("aria-valuenow", ratio).attr("style", "width: " + ratio + "%");
     }
 
     function openDetail(index) {
@@ -187,14 +167,14 @@
         }
         $('#imgFlow').empty();
         /*加载进度条*/
-        $(".progress-bar").attr("style","width: 0%");
+        $(".progress-bar").attr("style", "width: 0%");
         $('#loading').modal();
         var count = 1;
         var length = files.length;
         $(files).each(function (index, item) {
             var file = e.target.files[index];
             let fileFormat = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
-            if(!fileFormat.match(/.png|.jpg|.jpeg|.gif/)) {
+            if (!fileFormat.match(/.png|.jpg|.jpeg|.gif/)) {
                 length--;
                 console.log(length);
             }
@@ -210,10 +190,10 @@
                         var im = $(img).attr("onclick", "openDetail(" + index + ")").attr("img-index", index).attr("img-name", file.name);
                         let flow_div = $('<div class="item" data-w="' + w + '" data-h="' + h + '"></div>');
                         $("#imgFlow").append($(flow_div).append(im));
-                        var ratio = (count++/length).toFixed(2);
-                        loading(ratio*100);
+                        var ratio = (count++ / length).toFixed(2);
+                        loading(ratio * 100);
                         console.log(ratio);
-                        if (ratio ==1) {
+                        if (ratio == 1) {
                             flexImg();
                             $('#loading').modal('hide')
                         }
