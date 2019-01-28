@@ -48,18 +48,20 @@
     }
 </style>
 <body>
-<input id="pictures" type="file" webkitdirectory name="jpg" size="30" style="display:none"/>
+<input id="pictures" type="file" webkitdirectory name="jpg" size="30" style="display:none" accept="image/jpeg"/>
 <div id="message"></div>
 <div class="container">
     <div class="row">
-        <div class="col-lg-6 col-lg-offset-3">
-            <button type="button" class="btn btn-default" onclick="$('input[id=pictures]').click();">选择文件夹</button>
-            <button type="button" class="btn btn-default" onclick="flexImg()">（默认样式）Default</button>
+        <div class="col-lg-4 col-lg-offset-4">
+            <button type="button" class="btn btn-default btn-block" onclick="$('input[id=pictures]').click();">选择文件夹</button>
         </div>
     </div>
     <div class="row">
         <div class="pre-scrollable col-lg-10 col-lg-offset-1" style="height: 800px;margin-top: 35px">
             <div class="flex-images" id="imgFlow">
+                <div class="welcome">
+                    <h3>请选择文件夹预览图片</h3>
+                </div>
             </div>
         </div>
     </div>
@@ -127,10 +129,13 @@
         </div>
     </div>
 </div>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="loading">
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="loading" id="loading">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            ...
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -139,6 +144,10 @@
 
     function flexImg() {
         $('#imgFlow').flexImages({rowHeight: 100});
+    }
+
+    function loading(ratio) {
+        $(".progress-bar").attr("aria-valuenow",ratio).attr("style","width: "+ratio+"%");
     }
 
     function openDetail(index) {
@@ -164,22 +173,31 @@
 
     });
 
-
     function loadHeaderBg(url) {
         $(".modal-header").css("background", "url(" + url + ") center center no-repeat");
         $(".modal-header").css("background-size", "100% auto");
     }
 
     $("#pictures").change(function (e) {
-        $('#photoCover').val($(this).val());
         files = e.target.files;
         if (files.length > 1000) {
             alert("请选择少于1000张图片的文件夹");
-            $(this).val("")
+            $(this).val("");
             return;
         }
+        $('#imgFlow').empty();
+        /*加载进度条*/
+        $(".progress-bar").attr("style","width: 0%");
+        $('#loading').modal();
+        var count = 1;
+        var length = files.length;
         $(files).each(function (index, item) {
             var file = e.target.files[index];
+            let fileFormat = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+            if(!fileFormat.match(/.png|.jpg|.jpeg|.gif/)) {
+                length--;
+                console.log(length);
+            }
             $(file).localResizeIMG({
                 width: 200,
                 quality: 0.8,
@@ -192,8 +210,14 @@
                         var im = $(img).attr("onclick", "openDetail(" + index + ")").attr("img-index", index).attr("img-name", file.name);
                         let flow_div = $('<div class="item" data-w="' + w + '" data-h="' + h + '"></div>');
                         $("#imgFlow").append($(flow_div).append(im));
+                        var ratio = (count++/length).toFixed(2);
+                        loading(ratio*100);
+                        console.log(ratio);
+                        if (ratio ==1) {
+                            flexImg();
+                            $('#loading').modal('hide')
+                        }
                     };
-                    console.log(result);
                 }
             });
         });
@@ -249,32 +273,6 @@
         }
         // newDiv.slideDown(2000);
         newDiv.show();
-    }
-
-    function handleFileSelect(evt) {
-        var file = evt.target.files[0];
-        var reader = new FileReader();
-        reader.onloadend = function (e) {
-            printExif(e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
-
-    document.getElementById('f').addEventListener('change', handleFileSelect, false);
-
-    /*生成缩略图预览图片*/
-    function thumbnail(file) {
-        let z = new zz();
-        z.compressPhotoUpload({
-            file: file, //必传，上传图片
-            ratio: 0.1, //默认为0.1   压缩比
-            maxsize: 1, //默认为1024,单位为kb    大于此值则做压缩操作
-            success: (e) => { //必传，成功后的回调函数，返回的参数是图片信息（对象）
-                console.log(e);
-                return e.data;
-                //document.querySelector("body").innerHTML = `<a href="${}"  download><img id="img" src="${e.data}" width="200px"/></a>`
-            }
-        });
     }
 </script>
 </body>

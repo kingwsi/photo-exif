@@ -1,11 +1,18 @@
-
+.welcome{
+    display: block;
+    text-align: center;
+    padding-top: 100px;
+}
+.pre-scrollable{
+    border: #9b9b9b dashed 1px;
+    max-height: 450px;
+}
 .modal-content{
     border: 0px!important;
 }
 #detailModal .modal-header {
     height: 300px;
     border-bottom: none;
-    background: url(../images/564.jpg) center center no-repeat;
     background-size: 100% auto;
 }
 
