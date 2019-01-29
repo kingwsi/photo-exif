@@ -3,22 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>照片Exif信息查看&修改</title>
+    <link rel="icon" type="image/png" href="./assets/images/favicon.ico" sizes="32x32">
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.min.css?v=3.3.6">
-    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/jquery.flex-images.css">
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/index.css">
-    <script src="assets/js/jquery-3.3.1.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery.flex-images.min.js"></script>
-    <script src="assets/js/piexif.js"></script>
-    <script src="assets/js/localResizeIMG.js"></script>
+    <script src="./assets/js/jquery-3.3.1.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="./assets/js/jquery.flex-images.min.js"></script>
+    <script src="./assets/js/piexif.js"></script>
+    <script src="./assets/js/localResizeIMG.js"></script>
 </head>
 <style type="text/css">
     body {
         padding-top: 60px;
-    }
-
-    #imgFlow img:hover {
-        border: 1px solid red;
     }
 
     .t {
@@ -60,8 +56,8 @@
     <div class="row">
         <div class="pre-scrollable col-lg-10 col-lg-offset-1" style="height: 800px;margin-top: 35px">
             <div class="flex-images" id="imgFlow">
-                <div class="welcome">
-                    <h3>请选择文件夹预览图片</h3>
+                <div class="show-msg" onclick="$('input[id=pictures]').click();">
+                    <h3><a href="javascript:;">请选择文件夹预览图片</a></h3>
                 </div>
             </div>
         </div>
@@ -73,11 +69,14 @@
                 使用开源库&nbsp;
                 <a href="https://github.com/hMatoba/piexifjs" target="_blank">piexifjs</a>&nbsp;
                 <a href="https://github.com/twbs/bootstrap" target="_blank">BootStrap</a>&nbsp;
+                <a href="https://github.com/Pixabay/jQuery-flexImages" target="_blank">jQuery-flexImages</a>&nbsp;
             </p>
             <p>
-                author&nbsp; <a>ws</a>&nbsp;
-                <a href="https://github.com/kingwsi/photo-exif" target="_blank">https://github.com/kingwsi/photo-exif</a>
+                GitHub&nbsp; &nbsp;
+                <a href="https://github.com/kingwsi/photo-exif"
+                   target="_blank">https://github.com/kingwsi/photo-exif</a>
             </p>
+
         </div>
     </div>
 </div>
@@ -144,8 +143,6 @@
         $('#detailModal').modal({
             // backdrop: 'static',
             // keyboard: false
-            // remote: '/modify.html'
-
         })
     }
 
@@ -166,7 +163,8 @@
             return;
         }
         $('#imgFlow').empty();
-        /*加载进度条*/
+
+        /*显示加载进度条*/
         $(".progress-bar").attr("style", "width: 0%");
         $('#loading').modal();
         var count = 1;
@@ -191,9 +189,12 @@
                         let flow_div = $('<div class="item" data-w="' + w + '" data-h="' + h + '"></div>');
                         $("#imgFlow").append($(flow_div).append(im));
                         var ratio = (count++ / length).toFixed(2);
-                        loading(ratio * 100);
-                        console.log(ratio);
+                        if (count % 10 == 0) {
+                            console.log("更新进度条"+ratio);
+                            loading(ratio * 100);
+                        }
                         if (ratio == 1) {
+                            /*所有图片加载完成*/
                             flexImg();
                             $('#loading').modal('hide')
                         }

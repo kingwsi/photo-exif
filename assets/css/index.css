@@ -1,7 +1,21 @@
-.welcome{
+
+#imgFlow img{
+    transition: all .2s linear 0s;
+}
+#imgFlow img:hover{
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    transform: scale(1.1);
+}
+.show-msg{
     display: block;
     text-align: center;
     padding-top: 150px;
+}
+.show-msg a:hover,a:link{
+    color: #222222;
 }
 .pre-scrollable{
     border: #9b9b9b dashed 1px;
@@ -39,4 +53,41 @@
 }
 .foot p{
     display: block;
+}
+
+.flex-images {
+    overflow: hidden;
+}
+
+.flex-images .item {
+    float: left;
+    margin: 4px;
+    border: 1px solid #eee;
+    box-sizing: content-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.flex-images .item img {
+    width: 100%;
+    height: 100%;
+}
+
+/*flex images*/
+.flex-images {
+    overflow: hidden;
+}
+
+.flex-images .item {
+    float: left;
+    margin: 4px;
+    border: 1px solid #eee;
+    box-sizing: content-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.flex-images .item img {
+    width: 100%;
+    height: 100%;
 }
