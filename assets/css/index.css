@@ -1,4 +1,11 @@
-
+.select-input{
+    background: none;
+    -webkit-border-radius: 100px;
+    border-radius: 100px;
+    -webkit-box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15), 0 1px 2px 0 rgba(60,64,67,0.3);
+    /* box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15), 0 1px 2px 0 rgba(60,64,67,0.3); */
+    color: #1a73e8;
+}
 #imgFlow img{
     transition: all .2s linear 0s;
 }
