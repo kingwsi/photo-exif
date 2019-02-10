@@ -16,40 +16,18 @@
     body {
         padding-top: 60px;
     }
-
-    .t {
-        width: 700px;
-        overflow: hidden;
-    }
-
-    .divtd {
-        height: 30px;
-        overflow: hidden;
-    }
-
-
-    .th {
-        overflow: hidden;
-    }
-
-    .te {
-        width: 350px;
-        height: 30px;
-        overflow: hidden;
-    }
-
-    .originalImage {
-        max-width: 300px;
-        height: auto;
-    }
 </style>
+<script type="text/javascript" src="http://api.map.baidu.com/getscript?v=2.0&ak=SjIq3YIPfcmGhLCkmHux58m0wtI7ZxCl">
+    //v2.0版本的引用方式：src="http://api.map.baidu.com/api?v=2.0&ak=您的密钥"
+</script>
 <body>
 <input id="pictures" type="file" webkitdirectory name="jpg" size="30" style="display:none" accept="image/jpeg"/>
 <div id="message"></div>
 <div class="container">
     <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
-            <button type="button" class="btn btn-default btn-block select-input" onclick="$('input[id=pictures]').click();">选择文件夹
+            <button type="button" class="btn btn-default btn-block select-input"
+                    onclick="$('input[id=pictures]').click();">选择文件夹
             </button>
         </div>
     </div>
@@ -80,14 +58,14 @@
         </div>
     </div>
 </div>
-
+<!--查看模态框-->
 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                <h4 class="modal-title" id="detailLabel">Modal title</h4>
             </div>
             <div class="image-bg"></div>
             <div class="modal-body">
@@ -101,12 +79,75 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">重置</button>
-                <button type="button" class="btn btn-success">提交</button>
+                <button type="button" class="btn btn-primary" id="editBtn">编辑</button>
             </div>
         </div>
     </div>
 </div>
+<!--编辑模态框-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="edit-file-name">Modal title</h4>
+            </div>
+            <div class="image-bg"></div>
+            <div class="modal-body">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" id="edit-form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">制造商</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="make">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">型号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="model">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">拍摄时间</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">GPS坐标</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="请在地图标记位置" id="coordinate" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">详细地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="请在地图标记位置" id="address" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">选择坐标</label>
+                            <div class="col-sm-10">
+                                <div class="sel-gps" id="allmap"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="initPoint('35,1,42,1,4943,100','114,1,16,1,4503,100')">
+                    重置
+                </button>
+                <button type="button" class="btn btn-success" id="writeBtn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--读取进度-->
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="loading" id="loading">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -119,8 +160,12 @@
     </div>
 </div>
 <script>
+	var ua = navigator.userAgent.toLocaleLowerCase();
+	if (ua.match(/chrome/) == null) {
+		alert("当前浏览器不是Chrome，工具可能无法正常使用")
+	}
+        
     var files;
-
     function flexImg() {
         $('#imgFlow').flexImages({rowHeight: 100});
     }
@@ -129,16 +174,18 @@
         $(".progress-bar").attr("aria-valuenow", ratio).attr("style", "width: " + ratio + "%");
     }
 
+    /*打开模态框查看详情*/
     function openDetail(index) {
         $("#output").empty();
+        $("#editBtn").attr("onclick", "edit_simple(" + index + ")");
         //根据索引取出原始文件,读取exif信息
         let file = files[index];
+		$("#detailLabel").text(file.name);
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function (e1) {
             var dataURL = e1.target.result;
             printExif(dataURL);
-            console.log("读取" + file.name);
         };
         $('#detailModal').modal({
             // backdrop: 'static',
@@ -146,15 +193,15 @@
         })
     }
 
+    $("#editBtn").click(function () {
+
+    });
+
     $('#detailModal').on('hidden.bs.modal', function (e) {
 
     });
 
-    function loadHeaderBg(url) {
-        $(".modal-header").css("background", "url(" + url + ") center center no-repeat");
-        $(".modal-header").css("background-size", "100% auto");
-    }
-
+    /*加载文件*/
     $("#pictures").change(function (e) {
         files = e.target.files;
         if (files.length > 1000) {
@@ -165,7 +212,7 @@
         $('#imgFlow').empty();
 
         /*显示加载进度条*/
-        $(".progress-bar").attr("style", "width: 0%");
+        $(".progress-bar").attr("style", "width: 10%");
         $('#loading').modal();
         var count = 1;
         var length = files.length;
@@ -189,8 +236,8 @@
                         let flow_div = $('<div class="item" data-w="' + w + '" data-h="' + h + '"></div>');
                         $("#imgFlow").append($(flow_div).append(im));
                         var ratio = (count++ / length).toFixed(2);
-                        if (count % 10 == 0) {
-                            console.log("更新进度条"+ratio);
+                        if (count % 5 == 0) {
+                            console.log("更新进度条" + ratio);
                             loading(ratio * 100);
                         }
                         if (ratio == 1) {
@@ -208,13 +255,10 @@
     function printExif(dataURL) {
         var originalImg = new Image();
         originalImg.src = dataURL;
-
         //加载背景图
-        loadHeaderBg(dataURL);
-
         var exif = piexif.load(dataURL);
         var ifds = ["0th", "Exif", "GPS", "Interop", "1st"];
-        var s = ""
+        var s = "";
         for (var i = 0; i < 5; i++) {
             var ifd = ifds[i];
             var ifd_i = "";
@@ -224,22 +268,17 @@
                     str = JSON.stringify(exif[ifd][tag]);
                 } else {
                     str = escape(exif[ifd][tag]);
+                    if (str.length < 100){
+                        str = decodeURI(str);
+                    }
                 }
-                ifd_i += ("<tr><td class='te'>" + piexif.TAGS[ifd][tag]["name"] +
-                    "</td><td class='te'><div>" +
+                ifd_i += ("<tr><td>" + piexif.TAGS[ifd][tag]["name"] +
+                    "</td><td><div class='te' title='" + str + "'>" +
                     str + "</div></td></tr>");
-                console.log(str);
             }
             s += ("<table class='table'><tr><th colspan='2'>" +
                 ifd + "</th></tr>" + ifd_i + "</table>");
         }
-        // if (exif["thumbnail"]) {
-        //     var thumbStr = "data:image/jpeg;base64," + btoa(exif["thumbnail"]);
-        //     //$("#imgFlow").append('<div class="item" data-w="170" data-h="150"><img src="'+thumbStr+'"></div>');
-        //     var img = "<img src='{img}'></img>".replace("{img}", thumbStr);
-        //     s += ("<table class='t'><tr><th class='th'>thumbnail</th></tr><tr><td>" +
-        //         img + "</td></tr></table><br>");
-        // }
         var newDiv = $("<div class='z'></div>").html(s).hide();
 
         $("#output").prepend(newDiv);
@@ -249,17 +288,206 @@
             var h = originalImg.height;
             var size = $("<div></div>").text("Original size:" + w + "*" + h);
             var im = $(originalImg).addClass("originalImage");
-            // newDiv.prepend(im);
-            // newDiv.prepend(size);
-        }
-        // newDiv.slideDown(2000);
+            newDiv.prepend(im);
+            newDiv.prepend(size);
+        };
         newDiv.show();
     }
 
     /*简单编辑模式*/
-    function edit_simple(dataURL) {
-
+    function edit_simple(index) {
+		$("#edit-form")[0].reset();
+        $('#detailModal').modal('hide');
+        //根据索引取出原始文件,读取exif信息
+        let file = files[index];
+		$("#edit-file-name").text(file.name);
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload=function () {
+            var dataURL = reader.result;
+            var exif = piexif.load(dataURL);
+            /*初始化坐标*/
+            console.log("经纬度："+exif["GPS"]["2"]+","+exif["GPS"]["4"]);
+            initPoint(exif["GPS"]["2"] + "", exif["GPS"]["4"] + "");
+            $("input[name='date']").val(exif["Exif"]["36867"]);
+            $("input[name='make']").val(exif["0th"]["271"]);
+            $("input[name='model']").val(exif["0th"]["272"])
+        };
+        $('#editModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     }
+
+    /**
+     * 度分秒转度数
+     * @param latitude 纬度
+     * @param longitude 经度
+     */
+    function initPoint(latitude, longitude) {
+        let res = {};
+        var lat = latitude.split(",");
+        var lon = longitude.split(",");
+        var latLon = new Array(lat, lon);
+        $.each(latLon, function (index, item) {
+            if (item.length != 6) {
+                return;
+            }
+            var d = item[0];
+            var f = item[2];
+            var m = item[4] / 100;
+            var f = parseFloat(f) + parseFloat(m / 60);
+            var du = parseFloat(f / 60) + parseFloat(d);
+            latLon[index] = du;
+        });
+
+        point = new BMap.Point(latLon[1], latLon[0]);
+        //坐标转换成地址
+        geoc.getLocation(point, function (rs) {
+            var addComp = rs.addressComponents;
+            var address = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+            $('#coordinate').val(latLon[1] + "," + latLon[0]);
+            $("#address").val(address)
+        });
+        /*原始坐标 WGS84*/
+        // var markergg = new BMap.Marker(point);
+        // map.addOverlay(markergg); //
+        map.centerAndZoom(point, 12); // 中心点
+        //坐标转换完之后的回调函数
+        translateCallback = function (data) {
+            if (data.status === 0) {
+                var marker = new BMap.Marker(data.points[0]);
+                markersArray.push(marker);
+                map.addOverlay(marker);
+                map.setCenter(data.points[0]);
+            }
+        };
+        /*坐标转换成百度坐标*/
+        setTimeout(function () {
+            var convertor = new BMap.Convertor();
+            var pointArr = [];
+            pointArr.push(point);
+            convertor.translate(pointArr, 1, 5, translateCallback)
+        }, 1000);
+    }
+
+    var map = new BMap.Map("allmap");
+    var geoc = new BMap.Geocoder();   //地址解析对象
+    var markersArray = [];
+    var geolocation = new BMap.Geolocation();
+
+
+    geolocation.getCurrentPosition(function (r) {
+        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+            var mk = new BMap.Marker(r.point);
+            map.addOverlay(mk);
+            map.panTo(r.point);
+            map.enableScrollWheelZoom(true);
+        } else {
+            alert('failed' + this.getStatus());
+        }
+    }, {enableHighAccuracy: true});
+    map.addEventListener("click", showInfo);
+
+
+    //清除标识
+    function clearOverlays() {
+        if (markersArray) {
+            for (i in markersArray) {
+                map.removeOverlay(markersArray[i])
+            }
+        }
+    }
+
+    //地图上标注
+    function addMarker(point) {
+        var marker = new BMap.Marker(point);
+        markersArray.push(marker);
+        clearOverlays();
+        map.addOverlay(marker);
+    }
+
+    //点击地图时间处理
+    function showInfo(e) {
+        var gps = e.point.lng + "," + e.point.lat;
+        $('#coordinate').val(gps);
+        geoc.getLocation(e.point, function (rs) {
+            var addComp = rs.addressComponents;
+            var address = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+            $("#address").val(address)
+        });
+        addMarker(e.point);
+    }
+	
+    //写入照片信息
+    $("#writeBtn").click(function () {
+		var du1;
+		var fen;
+		var miao;
+        var make = $("input[name='make']").val();
+        var model = $("input[name='model']").val();
+        var date = $("input[name='date']").val();
+        var coordinate = $("#coordinate").val();
+        console.log(make+"\n"+model+"\n"+date+"\n"+coordinate)
+		var dataUrl = $(".originalImage").attr("src");
+		// make exif data
+		var zerothIfd = {};
+		var exifIfd = {};
+		var gpsIfd = {};
+		zerothIfd[piexif.ImageIFD.Make] = make;
+		zerothIfd[piexif.ImageIFD.Model] = model;
+		zerothIfd[piexif.ImageIFD.XResolution] = [72, 1];
+		zerothIfd[piexif.ImageIFD.YResolution] = [72, 1];
+		zerothIfd[piexif.ImageIFD.Software] = "photo-exif";
+		exifIfd[piexif.ExifIFD.DateTimeOriginal] = date;
+		exifIfd[piexif.ExifIFD.LensMake] = make;
+		exifIfd[piexif.ExifIFD.LensModel] = model;
+		gpsIfd[piexif.GPSIFD.GPSLatitudeRef] = "N";
+		gpsIfd[piexif.GPSIFD.GPSLongitudeRef] = "E";
+		var latlon = coordinate.split(",");
+		if(latlon.length != 2){
+			return;
+		}
+		$.each(latlon,function(index,item){
+			var str1 = item.split(".");
+			if(str1.length!=2) return;
+			du1 = str1[0];
+			var tp = "0."+str1[1]
+			var tp = String(tp*60);		//这里进行了强制类型转换
+			var str2 = tp.split(".");
+			fen =str2[0];
+			tp = "0."+str2[1];
+			tp = tp*60;
+			miao = tp;
+			if(index == 0) gpsIfd[piexif.GPSIFD.GPSLongitude] = [[du1,1],[fen,1],[miao,100]];
+			if(index == 1) gpsIfd[piexif.GPSIFD.GPSLatitude] = [[du1,1],[fen,1],[miao,100]];
+			// [[114,1],[16,1],[4503,100]]
+		})
+		
+		var exifObj = {"0th":zerothIfd, "Exif":exifIfd, "GPS":gpsIfd};
+		
+		// get exif binary as "string" type
+		var exifBytes = piexif.dump(exifObj);
+		var jpeg = piexif.insert(exifBytes, dataUrl);
+		downloadIMG(jpeg,$("#edit-file-name").text())
+    })
+	
+	//下载图片
+	function downloadIMG(jpeg, fileName) {
+		var str = atob(jpeg.split(",")[1]);
+		var data = [];
+		for (var p=0; p<str.length; p++) {
+		    data[p] = str.charCodeAt(p);
+		}
+		var ua = new Uint8Array(data);
+		var blob = new Blob([ua], {type: "image/jpeg"});
+		var aLink = document.createElement('a');
+		var evt = document.createEvent("HTMLEvents");
+		evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
+		aLink.download = fileName;
+		aLink.href = URL.createObjectURL(blob);
+		aLink.click();
+	}
 </script>
 </body>
 </html>
