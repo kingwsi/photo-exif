@@ -127,10 +127,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary"
-                        onclick="initPoint('35,1,42,1,4943,100','114,1,16,1,4503,100')">
-                    重置
-                </button>
                 <button type="button" class="btn btn-success" id="writeBtn">确定</button>
             </div>
         </div>
@@ -167,6 +163,7 @@
     });
 
     $('#detailModal').on('hidden.bs.modal', function (e) {
+
     });
     /*加载文件*/
     $("#pictures").change(function (e) {
@@ -190,7 +187,6 @@
     function printExif(dataURL) {
         var originalImg = new Image();
         originalImg.src = dataURL;
-        //加载背景图
         var exif = piexif.load(dataURL);
         var ifds = ["0th", "Exif", "GPS", "Interop", "1st"];
         var s = "";
@@ -252,12 +248,10 @@
             keyboard: false
         });
         console.log($("body").attr("class"));
-        alert(1)
     }
     $('#editModal').on('shown.bs.modal', function (e) {
         $("body").addClass($("body").attr("class","modal-open"));
-        alert(2)
-    })
+    });
 
     /**
      * 度分秒转度数
@@ -280,7 +274,10 @@
             var du = parseFloat(f / 60) + parseFloat(d);
             latLon[index] = du;
         });
-
+        if (latLon[0]=='undefined'||latLon[1]=='undefined'){
+            latLon[0] = '39.91';
+            latLon[1] = '116.404';
+        }
         point = new BMap.Point(latLon[1], latLon[0]);
         //坐标转换成地址
         geoc.getLocation(point, function (rs) {
