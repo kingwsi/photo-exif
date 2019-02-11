@@ -163,6 +163,7 @@
     }
 
     $("#editBtn").click(function () {
+
     });
 
     $('#detailModal').on('hidden.bs.modal', function (e) {
@@ -250,9 +251,13 @@
             backdrop: 'static',
             keyboard: false
         });
-
-
+        console.log($("body").attr("class"));
+        alert(1)
     }
+    $('#editModal').on('shown.bs.modal', function (e) {
+        $("body").addClass($("body").attr("class","modal-open"));
+        alert(2)
+    })
 
     /**
      * 度分秒转度数
@@ -323,7 +328,6 @@
         }
     }, {enableHighAccuracy: true});
     map.addEventListener("click", showInfo);
-
 
     //清除标识
     function clearOverlays() {
@@ -405,7 +409,7 @@
 		var exifBytes = piexif.dump(exifObj);
 		var jpeg = piexif.insert(exifBytes, dataUrl);
 		downloadIMG(jpeg,$("#edit-file-name").text())
-    })
+    });
 	
 	//下载图片
 	function downloadIMG(jpeg, fileName) {
